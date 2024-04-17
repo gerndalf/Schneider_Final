@@ -5,12 +5,19 @@ const statesController = require('../../controllers/statesController');
 router.route('/')
     .get(statesController.getAllStates);
 
-// Handle passed in State Code only (KS, NE, TX, etc)
-router.route('/:state')
-    .get(statesController.getState)
-    .post(statesController.createNewStateFact)
-    .put(estatesController.updateStateFact)
-    .delete(statesController.deleteStateFact)
+
+router.get('/:state', statesController.getState);
+router.get('/:state/capital', statesController.getCapital);
+router.get('/:state/nickname', statesController.getNickname);
+router.get('/:state/population', statesController.getPopulation);
+router.get('/:state/admission', statesController.getAdmission);
+
+
 // TODO handle more urls? like /funfact
+router.route('/:state/funfact')
+    .get(statesController.getStateFact)
+    .post(statesController.createNewStateFact)
+    .patch(estatesController.updateStateFact)
+    .delete(statesController.deleteStateFact);
 
 module.exports = router;

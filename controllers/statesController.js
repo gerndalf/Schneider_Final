@@ -25,56 +25,100 @@ const getAllStates = async (req, res) => {
     }
 };
 
-const getState = (req, res) => {
-    const employee = data.employees.find(emp => emp.id === parseInt(req.params.id));
-    if (!employee) {
-        return res.status(400).json({ "message": `Employee ID ${req.params.id} not found` });
+// TODO Include data from statesData.json!!!
+const getState = async (req, res) => {
+    if (!req?.params?.state) {
+        return res.status(400).json({ 'message': 'State Abbreviation required.' });
     }
-    res.json(employee);
+
+    const state = await State.findOne({ stateCode: req.params.state }).exec();
+    if (!state) {
+        return res.status(204).json({ 'message': `No state matches code ${req.params.state}` });
+    }
+    res.json(state);
 };
 
+const getCapital = async (req, res) => {
+
+};
+
+const getNickname = async (req, res) => {
+
+};
+
+const getPopulation = async (req, res) => {
+
+};
+
+const getAdmission = async (req, res) => {
+
+};
+
+const getStateFact = async (req, res) => {
+
+};
+
+// Not sure if this will work, what if new state facts appear? TEST TEST TEST
 const createNewStateFact = async (req, res) => {
-    const newEmployee = {
-        id: data.employees?.length ? data.employees[data.employees.length - 1].id + 1 : 1,
-        firstname: req.body.firstname,
-        lastname: req.body.lastname
+    if (!req?.params?.state) {
+        return res.status(400).json({ 'message': 'State Abbreviation required.' });
+    }
+    if (!req?.body?.funfacts) {
+        return res.status(400).json({ 'message': 'Fun facts required.' });
     }
 
-    if (!newEmployee.firstname || !newEmployee.lastname) {
-        return res.status(400).json({ 'message': 'First and last names are required.' });
+    const state = await State.findOne({ stateCode: req.params.state }).exec();
+    if (!state) {
+        return res.status(204).json({ 'message': `No state matches code ${req.params.state}` });
     }
-
-    data.setEmployees([...data.employees, newEmployee]);
-    res.status(201).json(data.employees);
+    state.funfacts = [...state.funfacts, ...req.body.funfacts];
+    const result = await state.save();
+    res.json(result);
 };
 
-const updateStateFact = (req, res) => {
-    const employee = data.employees.find(emp => emp.id === parseInt(req.body.id));
-    if (!employee) {
-        return res.status(400).json({ "message": `Employee ID ${req.body.id} not found` });
+const updateStateFact = async (req, res) => {
+    if (!req?.params?.state) {
+        return res.status(400).json({ 'message': 'State Abbreviation required.' });
     }
-    if (req.body.firstname) employee.firstname = req.body.firstname;
-    if (req.body.lastname) employee.lastname = req.body.lastname;
-    const filteredArray = data.employees.filter(emp => emp.id !== parseInt(req.body.id));
-    const unsortedArray = [...filteredArray, employee];
-    data.setEmployees(unsortedArray.sort((a, b) => a.id > b.id ? 1 : a.id < b.id ? -1 : 0));
-    res.json(data.employees);
+    if (!req?.body?.funfact || !req?.body?.index) {
+        return res.status(400).json({ 'message': 'Fun fact and Index required.' });
+    }
+
+    const state = await State.findOne({ stateCode: req.params.state }).exec();
+    if (!state) {
+        return res.status(204).json({ 'message': `No state matches code ${req.params.state}` });
+    }
+    state.funfacts[req.body.index] = req.body.funfact;
+    const result = await state.save();
+    res.json(result);
 };
 
-const deleteStateFact = (req, res) => {
-    const employee = data.employees.find(emp => emp.id === parseInt(req.body.id));
-    if (!employee) {
-        return res.status(400).json({ "message": `Employee ID ${req.body.id} not found` });
+const deleteStateFact = async (req, res) => {
+    if (!req?.params?.state) {
+        return res.status(400).json({ 'message': 'State Abbreviation required.' });
     }
-    const filteredArray = data.employees.filter(emp => emp.id !== parseInt(req.body.id));
-    data.setEmployees([...filteredArray]);
-    res.json(data.employees);
+    if (!req?.body?.index) {
+        return res.status(400).json({ 'message': 'Index required.' });
+    }
+
+    const state = await State.findOne({ stateCode: req.params.state }).exec();
+    if (!state) {
+        return res.status(204).json({ 'message': `No state matches code ${req.params.state}` });
+    }
+    state.funfacts = state.funfacts.splice(req.body.index - 1, req.body.index - 1);
+    const result = await state.save();
+    res.json(result);
 };
 
 module.exports = {
     getAllStates,
+    getStateFact,
     createNewStateFact,
     updateStateFact,
     deleteStateFact,
-    getState
+    getState,
+    getCapital,
+    getNickname,
+    getPopulation,
+    getAdmission
 };
