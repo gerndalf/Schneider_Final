@@ -6,29 +6,41 @@ const data = {
 
 // TODO Attach funfacts from MongoDB states array TEST TEST TEST
 const getAllStates = async (req, res) => {
-    // Attempt to find funfacts in DB
-    const dbStates = await State.find();
-    const combinedStateData = data.states.map((stateData) => {
-        var dbState = dbStates.find(state => state.stateCode === stateData.code)
-        if (dbState) {
-            stateData.funfacts = [...stateData.funfacts, ...dbState.funfacts];
-        }
-    });
+    // // Attempt to find funfacts in DB
+    // const dbStates = await State.find();
 
-    const nonContigStateNames = ['Hawaii', 'Alaska'];
+    // var combinedStateData = [];
+    // if (dbStates.length > 0) {
+    //     combinedStateData = data.states.map((stateData) => {
+    //         var dbState = dbStates.find(state => state.stateCode === stateData.code)
+    //         if (dbState) {
+    //             stateData.funfacts = [...stateData.funfacts, ...dbState.funfacts];
+    //         }
+    //         return stateData;
+    //     });
+    // } else {
+    //     combinedStateData = data.states;
+    // }
 
-    // TODO check for contig parameter here TEST TEST TEST
-    if (req.query.contig === 'true') {
-        // TODO filter to contig states
-        var contigStatesData = combinedStateData.filter(state => !nonContigStateNames.includes(state.state));
-        res.json(contigStateData);
-    } else if (req.query.contig === 'false') {
-        // TODO filter to non-contig states
-        var nonContigStates = combinedStateData.filter(state => nonContigStateNames.includes(state.state));
-        res.json(nonContigStates);
-    } else {
-        res.json(combinedStateData);
-    }
+    // const nonContigStateNames = ['Hawaii', 'Alaska'];
+
+    // // TODO check for contig parameter here TEST TEST TEST
+    // if (req.query.contig === 'true') {
+    //     // TODO filter to contig states
+    //     var contigStatesData = combinedStateData.filter(state => !nonContigStateNames.includes(state.state));
+    //     res.json(contigStateData);
+    //     console.log("contigTrue");
+    // } else if (req.query.contig === 'false') {
+    //     // TODO filter to non-contig states
+    //     var nonContigStates = combinedStateData.filter(state => nonContigStateNames.includes(state.state));
+    //     res.json(nonContigStates);
+    //     console.log("contigFalse");
+    // } else {
+    //     res.json(combinedStateData);
+    //     console.log("noContig");
+    // }
+
+    res.json(data.states);
 };
 
 // TODO Include data from statesData.json!!! TEST TEST TEST

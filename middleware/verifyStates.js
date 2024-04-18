@@ -6,10 +6,15 @@ const data = {
 const stateCodes = data.states.map(state => state.code);
 
 const verifyStates = (req, res, next) => {
-    const stateCode = req?.params?.state ? req?.params?.state.toUpperCase() : ''
+    const stateCode = req.params.state;
 
-    if (stateCodes.includes(stateCode)) {
-        req.code = stateCode;
+    // Move along if no code provided.
+    if (stateCode === undefined) {
+        next();
+    }
+
+    if (stateCodes.includes(stateCode.toUpperCase())) {
+        req.code = stateCode.toUpperCase();
         next();
     } else {
         return res.status(400).json({ 'message': 'Invalid state abbreviation parameter' });

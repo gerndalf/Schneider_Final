@@ -1,23 +1,21 @@
 const express = require('express');
 const router = express.Router();
 const statesController = require('../../controllers/statesController');
+const verifyStates = require('../../middleware/verifyStates');
 
-router.route('/')
-    .get(statesController.getAllStates);
-
-
-router.get('/:state', statesController.getState);
-router.get('/:state/capital', statesController.getCapital);
-router.get('/:state/nickname', statesController.getNickname);
-router.get('/:state/population', statesController.getPopulation);
-router.get('/:state/admission', statesController.getAdmission);
+router.get('/', statesController.getAllStates);
+router.get('/:state', verifyStates, statesController.getState)
+router.get('/:state/capital', verifyStates, statesController.getCapital)
+router.get('/:state/nickname', verifyStates, statesController.getNickname)
+router.get('/:state/population', verifyStates, statesController.getPopulation)
+router.get('/:state/admission', verifyStates, statesController.getAdmission);
 
 
 // TODO handle more urls? like /funfact
 router.route('/:state/funfact')
     .get(statesController.getStateFact)
     .post(statesController.createNewStateFact)
-    .patch(estatesController.updateStateFact)
+    .patch(statesController.updateStateFact)
     .delete(statesController.deleteStateFact);
 
 module.exports = router;
