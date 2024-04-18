@@ -6,6 +6,7 @@ const cors = require('cors');
 const corsOptions = require('./config/corsOptions');
 const { logger } = require('./middleware/logEvents');
 const errorHandler = require('./middleware/errorHandler');
+const verifyStates = require('./middleware/verifyStates');
 const mongoose = require('mongoose');
 const connectDB = require('./config/dbConn');
 const PORT = process.env.PORT || 3500;
@@ -15,6 +16,9 @@ connectDB();
 
 // custom middleware logger
 app.use(logger);
+
+// custom middleware state checker
+app.use(verifyStates);
 
 // Cross origin resource sharing
 app.use(cors(corsOptions));
