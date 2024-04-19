@@ -56,3 +56,13 @@
 20240419	11:06:46	e7cc8c31-b7ca-4da7-95c6-5337f881c04e	GET	undefined	/states/NH/funfact
 20240419	11:07:04	13886ea7-b67d-4092-b0bf-d1d249508d74	GET	undefined	/states/NH/funfact
 20240419	11:08:48	44f930df-b180-468d-8008-32793d3a000d	GET	undefined	/states/?contig=true
+20240419	11:19:06	0527f3d1-7d9d-4769-a2ba-8d880605033c	GET	undefined	/states/OR
+20240419	11:20:11	c280c9ef-068a-447b-9773-7243de6d0a34	POST	undefined	/states/OR/funfact
+20240419	11:39:16	fd652dc0-9d87-43ff-8436-09b0baf3ca64	POST	undefined	/states/CT/funfact
+20240419	11:39:33	fd08ed76-3fbe-48f8-8ed6-a1fb8cc619a3	DELETE	undefined	/states/CT/funfact
+20240419	11:39:42	66485185-67b9-4bee-b787-2d7eff180b56	GET	undefined	/states/CT/funfact
+20240419	11:39:44	4f4ddf06-d3ae-4ced-9ea5-8f932d48d0bd	GET	undefined	/states/CT/funfact
+20240419	11:44:15	5e7813c6-fbf5-4117-99b8-958eb1d943b5	GET	undefined	/states/CT/funfact
+20240419	11:44:42	ba87ba12-ab08-43ac-8614-c8ef63512f3d	GET	undefined	/states/NH/funfact
+20240419	11:44:48	107d4c09-c24b-49eb-ac44-2ecacfe6abc1	GET	undefined	/states/CT/funfact
+20240419	11:44:57	a89512bc-92c1-4ba7-b9d1-f41d52506a8f	POST	undefined	/states/CT/funfact

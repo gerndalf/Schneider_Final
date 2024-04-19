@@ -94,55 +94,91 @@ const getStateFact = async (req, res) => {
         }
     }
 
-    if (dataState.funfacts) {
+    if (dataState.funfacts !== undefined && dataState.funfacts.length > 0) {
         const randomIndex = Math.floor(Math.random() * dataState.funfacts.length);
         res.json({ 'funfact': dataState.funfacts[randomIndex] });
     } else {
-        res.json({ 'message': `No Fun Facts found for ${dataState.state}` });
+        res.status(404).json({ 'message': `No Fun Facts found for ${dataState.state}` });
     }
 };
 
-// Not sure if this will work, what if new state facts appear? TEST TEST TEST
 const createNewStateFact = async (req, res) => {
     if (!req?.body?.funfacts) {
-        return res.status(400).json({ 'message': 'Fun facts required.' });
+        return res.status(400).json({ 'message': 'State fun facts value required' });
     }
 
-    const state = await State.findOne({ stateCode: req.params.state }).exec();
-    if (!state) {
-        return res.status(204).json({ 'message': `No state matches code ${req.params.state}` });
+    // Look for existing DB document
+    const dbState = await State.findOne({ stateCode: req.params.state }).exec();
+
+    if (!dbState) {
+        const dataState = data.states.find(state => state.code === req.params.state);
+        try {
+            const result = await State.create({
+                name: dataState.state,
+                stateCode: dataState.code,
+                funfacts: [...req.body.funfacts]
+            })
+
+            res.status(201).json(result);
+        } catch (err) {
+            console.error(err);
+        }
+    } else {
+        if (state.funfacts) {
+            state.funfacts = [...state.funfacts, ...req.body.funfacts];
+        } else {
+            state.funfacts = req.body.funfacts;
+        }
+        const result = await state.save();
+        res.status(201).json(result);
     }
-    state.funfacts = [...state.funfacts, ...req.body.funfacts];
-    const result = await state.save();
-    res.json(result);
 };
 
 const updateStateFact = async (req, res) => {
-    if (!req?.body?.funfact || !req?.body?.index) {
-        return res.status(400).json({ 'message': 'Fun fact and Index required.' });
+    if (!req?.body?.index) {
+        return res.status(400).json({ 'message': 'State fun fact index value required' });
+    } else if (!req?.body?.funfact) {
+        return res.status(400).json({ 'message': 'State fun fact value required' });
     }
 
     const state = await State.findOne({ stateCode: req.params.state }).exec();
-    if (!state) {
-        return res.status(204).json({ 'message': `No state matches code ${req.params.state}` });
+
+    if (state) {
+        if (state.funfacts[req.body.index - 1]) {
+            state.funfacts[req.body.index - 1] = req.body.funfact;
+            const result = await state.save();
+            res.json(result);
+        } else {
+            res.status(404).json({ 'message': `No Fun Fact found at that index for ${state.name}` });
+        }
+    } else {
+        // Grab JSON data for state name
+        const dataState = data.state.find(state => state.code === req.params.state);
+        res.status(404).json({ 'message': `No Fun Facts found for ${dataState.state}` });
     }
-    state.funfacts[req.body.index] = req.body.funfact;
-    const result = await state.save();
-    res.json(result);
 };
 
 const deleteStateFact = async (req, res) => {
     if (!req?.body?.index) {
-        return res.status(400).json({ 'message': 'Index required.' });
+        return res.status(400).json({ 'message': 'State fun fact index value required' });
     }
 
-    const state = await State.findOne({ stateCode: req.params.state }).exec();
-    if (!state) {
-        return res.status(204).json({ 'message': `No state matches code ${req.params.state}` });
+    // Check DB for state
+    const dbState = await State.findOne({ stateCode: req.params.state }).exec();
+    if (!dbState) {
+        // Grab JSON data for state name
+        const dataState = data.state.find(state => state.code === req.params.state);
+        return res.status(204).json({ 'message': `No Fun Facts found for ${dataState.state}` });
     }
-    state.funfacts = state.funfacts.splice(req.body.index - 1, req.body.index - 1);
-    const result = await state.save();
-    res.json(result);
+
+    // Check dbState for index fact
+    if (dbState.funfacts[req.body.index = 1]) {
+        dbState.funfacts = dbState.funfacts.splice(req.body.index - 1, req.body.index - 1);
+        const result = await dbState.save();
+        res.json(result);
+    } else {
+        res.status(404).json({ 'message': `No Fun Fact found at that index for ${dbState.name}` });
+    }
 };
 
 module.exports = {
