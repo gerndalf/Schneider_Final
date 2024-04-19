@@ -13,9 +13,9 @@ router.get('/:state/admission', verifyStates, statesController.getAdmission);
 
 // TODO handle more urls? like /funfact
 router.route('/:state/funfact')
-    .get(statesController.getStateFact)
-    .post(statesController.createNewStateFact)
-    .patch(statesController.updateStateFact)
-    .delete(statesController.deleteStateFact);
+    .get(verifyStates, statesController.getStateFact)
+    .post(verifyStates, statesController.createNewStateFact)
+    .patch(verifyStates, statesController.updateStateFact)
+    .delete(verifyStates, statesController.deleteStateFact);
 
 module.exports = router;

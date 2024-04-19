@@ -4,46 +4,43 @@ const data = {
     setStates: function (data) { this.states = data }
 };
 
-// TODO Attach funfacts from MongoDB states array TEST TEST TEST
 const getAllStates = async (req, res) => {
-    // // Attempt to find funfacts in DB
-    // const dbStates = await State.find();
+    // Attempt to find funfacts in DB
+    const dbStates = await State.find();
 
-    // var combinedStateData = [];
-    // if (dbStates.length > 0) {
-    //     combinedStateData = data.states.map((stateData) => {
-    //         var dbState = dbStates.find(state => state.stateCode === stateData.code)
-    //         if (dbState) {
-    //             stateData.funfacts = [...stateData.funfacts, ...dbState.funfacts];
-    //         }
-    //         return stateData;
-    //     });
-    // } else {
-    //     combinedStateData = data.states;
-    // }
+    var combinedStateData = [];
+    if (dbStates.length > 0) {
+        combinedStateData = data.states.map((stateData) => {
+            var dbState = dbStates.find(state => state.stateCode === stateData.code)
+            if (dbState) {
+                if (stateData.funfacts) {
+                    stateData.funfacts = [...stateData.funfacts, ...dbState.funfacts];
+                } else {
+                    stateData.funfacts = dbState.funfacts;
+                }
+            }
+            return stateData;
+        });
+    } else {
+        combinedStateData = data.states;
+    }
 
-    // const nonContigStateNames = ['Hawaii', 'Alaska'];
+    const nonContigStateNames = ['Hawaii', 'Alaska'];
 
-    // // TODO check for contig parameter here TEST TEST TEST
-    // if (req.query.contig === 'true') {
-    //     // TODO filter to contig states
-    //     var contigStatesData = combinedStateData.filter(state => !nonContigStateNames.includes(state.state));
-    //     res.json(contigStateData);
-    //     console.log("contigTrue");
-    // } else if (req.query.contig === 'false') {
-    //     // TODO filter to non-contig states
-    //     var nonContigStates = combinedStateData.filter(state => nonContigStateNames.includes(state.state));
-    //     res.json(nonContigStates);
-    //     console.log("contigFalse");
-    // } else {
-    //     res.json(combinedStateData);
-    //     console.log("noContig");
-    // }
-
-    res.json(data.states);
+    if (req.query.contig === 'true') {
+        var contigStatesData = combinedStateData.filter(state => !nonContigStateNames.includes(state.state));
+        res.json(contigStatesData);
+        console.log("contigTrue");
+    } else if (req.query.contig === 'false') {
+        var nonContigStates = combinedStateData.filter(state => nonContigStateNames.includes(state.state));
+        res.json(nonContigStates);
+        console.log("contigFalse");
+    } else {
+        res.json(combinedStateData);
+        console.log("noContig");
+    }
 };
 
-// TODO Include data from statesData.json!!! TEST TEST TEST
 const getState = async (req, res) => {
     // Attempt to find funfacts in DB
     const dbState = await State.findOne({ stateCode: req.code }).exec();
@@ -51,7 +48,11 @@ const getState = async (req, res) => {
     const dataState = data.states.find(state => state.code === req.code)
 
     if (dbState) {
-        dataState.funfacts = [...dataState.funfacts, ...dbState.funfacts];
+        if (dataState.funfacts) {
+            dataState.funfacts = [...dataState.funfacts, ...dbState.funfacts];
+        } else {
+            dataState.funfacts = dbState.funfacts;
+        }
         res.json(dataState)
     } else {
         res.json(dataState);
@@ -79,14 +80,26 @@ const getAdmission = async (req, res) => {
 };
 
 const getStateFact = async (req, res) => {
-    // Attempt to find funfacts for state
+    // Attempt to find funfacts in DB
     const dbState = await State.findOne({ stateCode: req.code }).exec();
+    // Grab state from statesData.json
+    const dataState = data.states.find(state => state.code === req.code)
 
+    // Verify possible DB funfacts and combine with JSON data
     if (dbState) {
-        const randomIndex = Math.floor(Math.random() * dbState.funfacts.length);
-        res.json({ 'state': dbState.name, 'funfact': dbState.funfacts[randomIndex] });
+        if (dataState.funfacts) {
+            dataState.funfacts = [...dataState.funfacts, ...dbState.funfacts];
+        } else {
+            dataState.funfacts = dbState.funfacts;
+        }
     }
 
+    if (dataState.funfacts) {
+        const randomIndex = Math.floor(Math.random() * dataState.funfacts.length);
+        res.json({ 'funfact': dataState.funfacts[randomIndex] });
+    } else {
+        res.json({ 'message': `No Fun Facts found for ${dataState.state}` });
+    }
 };
 
 // Not sure if this will work, what if new state facts appear? TEST TEST TEST
