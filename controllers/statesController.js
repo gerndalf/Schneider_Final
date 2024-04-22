@@ -46,7 +46,7 @@ const getState = async (req, res) => {
     const dbState = await State.findOne({ stateCode: req.code }).exec();
     // Grab state from statesData.json
     const dataState = data.states.find(state => state.code === req.code)
-    console.log(dataState.toString());
+
     if (dbState) {
         if (dataState.funfacts) {
             dataState.funfacts = [...dataState.funfacts, ...dbState.funfacts];
@@ -125,7 +125,11 @@ const createNewStateFact = async (req, res) => {
         }
     } else {
         if (dbState.funfacts) {
-            dbState.funfacts = [...dbState.funfacts, ...req.body.funfacts];
+            if (typeof req.body.funfacts === 'string') {
+                dbState.funfacts = [...dbState.funfacts, req.body.funfacts];
+            } else {
+                dbState.funfacts = [...dbState.funfacts, ...req.body.funfacts];
+            }
         } else {
             dbState.funfacts = req.body.funfacts;
         }
