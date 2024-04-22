@@ -114,7 +114,6 @@ const createNewStateFact = async (req, res) => {
         const dataState = data.states.find(state => state.code === req.params.state);
         try {
             const result = await State.create({
-                name: dataState.state,
                 stateCode: dataState.code,
                 funfacts: [...req.body.funfacts]
             })
@@ -146,6 +145,8 @@ const updateStateFact = async (req, res) => {
     }
 
     const state = await State.findOne({ stateCode: req.params.state }).exec();
+    // Grab JSON data for state name
+    const dataState = data.state.find(state => state.code === req.params.state);
 
     if (state) {
         if (state.funfacts[req.body.index - 1]) {
@@ -153,11 +154,9 @@ const updateStateFact = async (req, res) => {
             const result = await state.save();
             res.json(result);
         } else {
-            res.status(404).json({ 'message': `No Fun Fact found at that index for ${state.name}` });
+            res.status(404).json({ 'message': `No Fun Fact found at that index for ${dataState.state}` });
         }
     } else {
-        // Grab JSON data for state name
-        const dataState = data.state.find(state => state.code === req.params.state);
         res.status(404).json({ 'message': `No Fun Facts found for ${dataState.state}` });
     }
 };
@@ -167,11 +166,12 @@ const deleteStateFact = async (req, res) => {
         return res.status(400).json({ 'message': 'State fun fact index value required' });
     }
 
+    // Grab JSON data for state name
+    const dataState = data.state.find(state => state.code === req.params.state);
+
     // Check DB for state
     const dbState = await State.findOne({ stateCode: req.params.state }).exec();
     if (!dbState) {
-        // Grab JSON data for state name
-        const dataState = data.state.find(state => state.code === req.params.state);
         return res.status(204).json({ 'message': `No Fun Facts found for ${dataState.state}` });
     }
 
@@ -181,7 +181,7 @@ const deleteStateFact = async (req, res) => {
         const result = await dbState.save();
         res.json(result);
     } else {
-        res.status(404).json({ 'message': `No Fun Fact found at that index for ${dbState.name}` });
+        res.status(404).json({ 'message': `No Fun Fact found at that index for ${dataState.state}` });
     }
 };
 
