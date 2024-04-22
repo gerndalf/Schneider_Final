@@ -47,7 +47,7 @@ const getState = async (req, res) => {
     // Grab state from statesData.json
     const dataState = data.states.find(state => state.code === req.code)
     console.log(dataState.toString());
-    if (dbState) {
+    if (dbState && dbState.funfacts.length > 0) {
         if (dataState.funfacts) {
             dataState.funfacts = [...dataState.funfacts, ...dbState.funfacts];
         } else {
@@ -86,7 +86,7 @@ const getStateFact = async (req, res) => {
     const dataState = data.states.find(state => state.code === req.code)
 
     // Verify possible DB funfacts and combine with JSON data
-    if (dbState) {
+    if (dbState && dbState.funfacts.length > 0) {
         if (dataState.funfacts) {
             dataState.funfacts = [...dataState.funfacts, ...dbState.funfacts];
         } else {
@@ -105,6 +105,8 @@ const getStateFact = async (req, res) => {
 const createNewStateFact = async (req, res) => {
     if (!req?.body?.funfacts) {
         return res.status(400).json({ 'message': 'State fun facts value required' });
+    } else if (!Array.isArray(req?.body?.funfacts)) {
+        return res.status(400).json({ 'message': 'State fun facts value must be an array' });
     }
 
     // Look for existing DB document
@@ -124,11 +126,7 @@ const createNewStateFact = async (req, res) => {
         }
     } else {
         if (dbState.funfacts) {
-            if (typeof req.body.funfacts === 'string') {
-                dbState.funfacts = [...dbState.funfacts, req.body.funfacts];
-            } else {
-                dbState.funfacts = [...dbState.funfacts, ...req.body.funfacts];
-            }
+            dbState.funfacts = [...dbState.funfacts, ...req.body.funfacts];
         } else {
             dbState.funfacts = req.body.funfacts;
         }
@@ -149,8 +147,8 @@ const updateStateFact = async (req, res) => {
     const dataState = data.state.find(state => state.code === req.params.state);
 
     if (state) {
-        if (state.funfacts[req.body.index - 1]) {
-            state.funfacts[req.body.index - 1] = req.body.funfact;
+        if (state.funfacts[parseInt(req.body.index) - 1]) {
+            state.funfacts[parseInt(req.body.index) - 1] = req.body.funfact;
             const result = await state.save();
             res.json(result);
         } else {
@@ -176,8 +174,8 @@ const deleteStateFact = async (req, res) => {
     }
 
     // Check dbState for index fact
-    if (dbState.funfacts[req.body.index = 1]) {
-        dbState.funfacts = dbState.funfacts.splice(req.body.index - 1, req.body.index - 1);
+    if (dbState.funfacts[parseInt(req.body.index) = 1]) {
+        dbState.funfacts = dbState.funfacts.splice(parseInt(req.body.index) - 1, parseInt(req.body.index) - 1);
         const result = await dbState.save();
         res.json(result);
     } else {
