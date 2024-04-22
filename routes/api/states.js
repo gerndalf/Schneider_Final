@@ -10,8 +10,6 @@ router.get('/:state/nickname', verifyStates, statesController.getNickname)
 router.get('/:state/population', verifyStates, statesController.getPopulation)
 router.get('/:state/admission', verifyStates, statesController.getAdmission);
 
-
-// TODO handle more urls? like /funfact
 router.route('/:state/funfact')
     .get(verifyStates, statesController.getStateFact)
     .post(verifyStates, statesController.createNewStateFact)

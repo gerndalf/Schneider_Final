@@ -14,12 +14,11 @@ const getAllStates = async (req, res) => {
             var dbState = dbStates.find(state => state.stateCode === stateData.code)
             if (dbState) {
                 if (stateData.funfacts) {
-                    stateData.funfacts = [...stateData.funfacts, ...dbState.funfacts];
+                    stateData.funfacts.push(dbState.funfacts);
                 } else {
                     stateData.funfacts = dbState.funfacts;
                 }
             }
-            return stateData;
         });
     } else {
         combinedStateData = data.states;
@@ -49,7 +48,7 @@ const getState = async (req, res) => {
     console.log(dataState.toString());
     if (dbState && dbState.funfacts.length > 0) {
         if (dataState.funfacts) {
-            dataState.funfacts = [...dataState.funfacts, ...dbState.funfacts];
+            dataState.funfacts.push(dbState.funfacts);
         } else {
             dataState.funfacts = dbState.funfacts;
         }
@@ -126,7 +125,7 @@ const createNewStateFact = async (req, res) => {
         }
     } else {
         if (dbState.funfacts) {
-            dbState.funfacts = [...dbState.funfacts, ...req.body.funfacts];
+            dbState.funfacts.push(req.body.funfacts)
         } else {
             dbState.funfacts = req.body.funfacts;
         }
@@ -169,7 +168,7 @@ const deleteStateFact = async (req, res) => {
 
     // Check DB for state
     const dbState = await State.findOne({ stateCode: req.params.state }).exec();
-    if (!dbState) {
+    if (!dbState || dbState.funfacts.length <= 0) {
         return res.status(204).json({ 'message': `No Fun Facts found for ${dataState.state}` });
     }
 
@@ -193,5 +192,5 @@ module.exports = {
     getCapital,
     getNickname,
     getPopulation,
-    getAdmission
+    getAdmission,
 };
