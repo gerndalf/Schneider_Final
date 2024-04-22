@@ -144,7 +144,7 @@ const updateStateFact = async (req, res) => {
 
     const state = await State.findOne({ stateCode: req.params.state }).exec();
     // Grab JSON data for state name
-    const dataState = data.state.find(state => state.code === req.params.state);
+    const dataState = data.states.find(state => state.code === req.params.state);
 
     if (state) {
         if (state.funfacts[parseInt(req.body.index) - 1]) {
@@ -165,7 +165,7 @@ const deleteStateFact = async (req, res) => {
     }
 
     // Grab JSON data for state name
-    const dataState = data.state.find(state => state.code === req.params.state);
+    const dataState = data.states.find(state => state.code === req.params.state);
 
     // Check DB for state
     const dbState = await State.findOne({ stateCode: req.params.state }).exec();
