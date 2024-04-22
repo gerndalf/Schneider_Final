@@ -13,11 +13,7 @@ const getAllStates = async (req, res) => {
         combinedStateData = data.states.map((stateData) => {
             var dbState = dbStates.find(state => state.stateCode === stateData.code)
             if (dbState) {
-                if (stateData.funfacts) {
-                    dbState.funfacts.forEach(funfact => { stateData.funfacts.push(funfact) });
-                } else {
-                    stateData.funfacts = dbState.funfacts;
-                }
+                stateData.funfacts = dbState.funfacts;
             }
             return stateData;
         });
@@ -45,14 +41,10 @@ const getState = async (req, res) => {
     // Attempt to find funfacts in DB
     const dbState = await State.findOne({ stateCode: req.code }).exec();
     // Grab state from statesData.json
-    const dataState = data.states.find(state => state.code === req.code)
+    const dataState = data.states.find(state => state.code === req.code);
     console.log(dataState.toString());
     if (dbState && dbState.funfacts.length > 0) {
-        if (dataState.funfacts) {
-            dbState.funfacts.forEach(funfact => { dataState.funfacts.push(funfact) });
-        } else {
-            dataState.funfacts = dbState.funfacts;
-        }
+        dataState.funfacts = dbState.funfacts;
         res.json(dataState)
     } else {
         res.json(dataState);
@@ -87,11 +79,7 @@ const getStateFact = async (req, res) => {
 
     // Verify possible DB funfacts and combine with JSON data
     if (dbState && dbState.funfacts.length > 0) {
-        if (dataState.funfacts) {
-            dataState.funfacts = [...dataState.funfacts, ...dbState.funfacts];
-        } else {
-            dataState.funfacts = dbState.funfacts;
-        }
+        dataState.funfacts = dbState.funfacts;
     }
 
     if (dataState.funfacts !== undefined && dataState.funfacts.length > 0) {
@@ -125,11 +113,7 @@ const createNewStateFact = async (req, res) => {
             console.error(err);
         }
     } else {
-        if (dbState.funfacts) {
-            req.body.funfacts.forEach(funfact => { dbState.funfacts.push(funfact) });
-        } else {
-            dbState.funfacts = req.body.funfacts;
-        }
+        req.body.funfacts.forEach(funfact => { dbState.funfacts.push(funfact) });
         const result = await dbState.save();
         res.status(201).json(result);
     }
