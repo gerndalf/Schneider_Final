@@ -174,8 +174,8 @@ const deleteStateFact = async (req, res) => {
     }
 
     // Check dbState for index fact
-    if (dbState.funfacts[parseInt(req.body.index) = 1]) {
-        dbState.funfacts = dbState.funfacts.splice(parseInt(req.body.index) - 1, parseInt(req.body.index) - 1);
+    if (dbState.funfacts[parseInt(req.body.index) - 1]) {
+        dbState.funfacts.splice(parseInt(req.body.index) - 1, 1);
         const result = await dbState.save();
         res.json(result);
     } else {
