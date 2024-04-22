@@ -169,8 +169,8 @@ const deleteStateFact = async (req, res) => {
 
     // Check DB for state
     const dbState = await State.findOne({ stateCode: req.params.state }).exec();
-    if (!dbState || dbState.funfacts.length <= 0) {
-        return res.status(204).json({ 'message': `No Fun Facts found for ${dataState.state}` });
+    if (dbState === null || dbState.funfacts.length <= 0) {
+        return res.status(404).json({ 'message': `No Fun Facts found for ${dataState.state}` });
     }
 
     // Check dbState for index fact
