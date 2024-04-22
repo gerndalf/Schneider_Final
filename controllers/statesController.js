@@ -124,12 +124,12 @@ const createNewStateFact = async (req, res) => {
             console.error(err);
         }
     } else {
-        if (state.funfacts) {
-            state.funfacts = [...state.funfacts, ...req.body.funfacts];
+        if (dbState.funfacts) {
+            dbState.funfacts = [...dbState.funfacts, ...req.body.funfacts];
         } else {
-            state.funfacts = req.body.funfacts;
+            dbState.funfacts = req.body.funfacts;
         }
-        const result = await state.save();
+        const result = await dbState.save();
         res.status(201).json(result);
     }
 };
