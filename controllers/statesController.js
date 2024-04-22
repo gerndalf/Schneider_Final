@@ -14,11 +14,12 @@ const getAllStates = async (req, res) => {
             var dbState = dbStates.find(state => state.stateCode === stateData.code)
             if (dbState) {
                 if (stateData.funfacts) {
-                    stateData.funfacts.push(dbState.funfacts);
+                    dbState.funfacts.forEach(funfact => { stateData.funfacts.push(funfact) });
                 } else {
                     stateData.funfacts = dbState.funfacts;
                 }
             }
+            return stateData;
         });
     } else {
         combinedStateData = data.states;
@@ -48,7 +49,7 @@ const getState = async (req, res) => {
     console.log(dataState.toString());
     if (dbState && dbState.funfacts.length > 0) {
         if (dataState.funfacts) {
-            dataState.funfacts.push(dbState.funfacts);
+            dbState.funfacts.forEach(funfact => { dataState.funfacts.push(funfact) });
         } else {
             dataState.funfacts = dbState.funfacts;
         }
@@ -125,7 +126,7 @@ const createNewStateFact = async (req, res) => {
         }
     } else {
         if (dbState.funfacts) {
-            dbState.funfacts.push(req.body.funfacts)
+            req.body.funfacts.forEach(funfact => { dbState.funfacts.push(funfact) });
         } else {
             dbState.funfacts = req.body.funfacts;
         }
