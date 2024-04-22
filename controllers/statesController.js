@@ -46,7 +46,7 @@ const getState = async (req, res) => {
     const dbState = await State.findOne({ stateCode: req.code }).exec();
     // Grab state from statesData.json
     const dataState = data.states.find(state => state.code === req.code)
-
+    console.log(dataState.toString());
     if (dbState) {
         if (dataState.funfacts) {
             dataState.funfacts = [...dataState.funfacts, ...dbState.funfacts];
@@ -71,7 +71,7 @@ const getNickname = async (req, res) => {
 
 const getPopulation = async (req, res) => {
     const state = data.states.find(state => state.code === req.code);
-    res.json({ 'state': state.state, 'population': state.population });
+    res.json({ 'state': state.state, 'population': state.population.toLocaleString() });
 };
 
 const getAdmission = async (req, res) => {
