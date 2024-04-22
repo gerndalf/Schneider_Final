@@ -46,7 +46,7 @@ const getState = async (req, res) => {
     const dbState = await State.findOne({ stateCode: req.code }).exec();
     // Grab state from statesData.json
     const dataState = data.states.find(state => state.code === req.code)
-
+    console.log(dataState.toString());
     if (dbState) {
         if (dataState.funfacts) {
             dataState.funfacts = [...dataState.funfacts, ...dbState.funfacts];
