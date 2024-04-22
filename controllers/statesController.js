@@ -26,14 +26,11 @@ const getAllStates = async (req, res) => {
     if (req.query.contig === 'true') {
         var contigStatesData = combinedStateData.filter(state => !nonContigStateNames.includes(state.state));
         res.json(contigStatesData);
-        console.log("contigTrue");
     } else if (req.query.contig === 'false') {
         var nonContigStates = combinedStateData.filter(state => nonContigStateNames.includes(state.state));
         res.json(nonContigStates);
-        console.log("contigFalse");
     } else {
         res.json(combinedStateData);
-        console.log("noContig");
     }
 };
 
@@ -42,7 +39,7 @@ const getState = async (req, res) => {
     const dbState = await State.findOne({ stateCode: req.code }).exec();
     // Grab state from statesData.json
     const dataState = data.states.find(state => state.code === req.code);
-    console.log(dataState.toString());
+
     if (dbState && dbState.funfacts.length > 0) {
         dataState.funfacts = dbState.funfacts;
         res.json(dataState)
